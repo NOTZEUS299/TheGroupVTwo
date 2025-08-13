@@ -1,6 +1,7 @@
 import { ReactNode } from 'react'
 import { useAuthStore } from '../stores/authStore'
-import { hasPermission, PermissionName } from '../utils/rbac'
+import { hasPermission } from '../utils/rbac'
+import type { PermissionName } from '../utils/rbac'
 
 interface PermissionGateProps {
   permission: PermissionName
