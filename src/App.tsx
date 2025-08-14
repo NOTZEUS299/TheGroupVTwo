@@ -31,15 +31,21 @@ const queryClient = new QueryClient({
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading, initialized } = useAuthStore()
   
+  console.log('ProtectedRoute render:', { user: !!user, loading, initialized })
+  
   if (!initialized || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
       </div>
     )
   }
   
   if (!user) {
+    console.log('No user found, redirecting to login')
     return <Navigate to="/login" replace />
   }
   
@@ -50,9 +56,9 @@ function App() {
   const { getCurrentUser } = useAuthStore()
 
   useEffect(() => {
-    // Only call getCurrentUser once on app mount
+    console.log('App mounted, initializing auth...')
     getCurrentUser()
-  }, []) // Empty dependency array
+  }, [getCurrentUser])
 
   return (
     <QueryClientProvider client={queryClient}>

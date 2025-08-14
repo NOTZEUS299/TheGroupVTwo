@@ -144,10 +144,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   getCurrentUser: async () => {
-    // Only fetch if not already initialized
-    if (get().initialized) return
+    const state = get()
+    // Only fetch if not already initialized or currently loading
+    if (state.initialized || state.loading) return
     
-    set({ loading: true })
+    set({ loading: true, error: null })
     try {
       const { data: { user } } = await supabase.auth.getUser()
       
@@ -160,7 +161,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             .maybeSingle()
 
           if (error) {
-            console.warn('Profile fetch error:', error)
+            console.warn('Profile fetch error during getCurrentUser:', error)
             // Use basic user info from auth
             const basicUser: User = {
               id: user.id,
@@ -184,7 +185,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             set({ user: basicUser, loading: false, initialized: true })
           }
         } catch (profileError: any) {
-          console.warn('Profile handling error:', profileError)
+          console.warn('Profile handling error during getCurrentUser:', profileError)
           // Fallback to basic user object
           const basicUser: User = {
             id: user.id,
@@ -199,6 +200,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         set({ user: null, loading: false, initialized: true })
       }
     } catch (error: any) {
+      console.error('Error in getCurrentUser:', error)
       set({ error: error.message, loading: false, initialized: true })
     }
   },
@@ -226,8 +228,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   clearError: () => set({ error: null }),
 }))
 
-// Initialize auth state on app load
+// Initialize auth state on app load - prevent duplicate listeners
+let authListenerInitialized = false
+
 supabase.auth.onAuthStateChange(async (event, session) => {
+  console.log('Auth state change:', event, session?.user?.id)
+  
   if (event === 'SIGNED_IN' && session?.user) {
     try {
       const { data: profile } = await supabase
@@ -263,5 +269,7 @@ supabase.auth.onAuthStateChange(async (event, session) => {
     }
   } else if (event === 'SIGNED_OUT') {
     useAuthStore.setState({ user: null, initialized: true })
+  } else if (event === 'TOKEN_REFRESHED') {
+    console.log('Token refreshed successfully')
   }
 })
