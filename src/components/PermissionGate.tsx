@@ -10,10 +10,21 @@ interface PermissionGateProps {
 }
 
 export const PermissionGate = ({ permission, children, fallback = null }: PermissionGateProps) => {
-  const { user } = useAuthStore()
+  const { user, loading, initialized } = useAuthStore()
   
-  if (hasPermission(user, permission)) {
-    return <>{children}</>
+  // Don't render anything while loading
+  if (!initialized || loading) {
+    return <>{fallback}</>
+  }
+  
+  // Check permission safely
+  try {
+    if (hasPermission(user, permission)) {
+      return <>{children}</>
+    }
+  } catch (error) {
+    console.error('Error checking permission:', error)
+    return <>{fallback}</>
   }
   
   return <>{fallback}</>
@@ -26,7 +37,12 @@ interface RoleGateProps {
 }
 
 export const RoleGate = ({ roles, children, fallback = null }: RoleGateProps) => {
-  const { user } = useAuthStore()
+  const { user, loading, initialized } = useAuthStore()
+  
+  // Don't render anything while loading
+  if (!initialized || loading) {
+    return <>{fallback}</>
+  }
   
   if (user && roles.includes(user.role)) {
     return <>{children}</>

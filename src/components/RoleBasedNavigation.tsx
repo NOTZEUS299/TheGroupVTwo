@@ -2,11 +2,20 @@ import { useAuthStore } from '../stores/authStore'
 import { getUserPermissions, getRoleDisplayName, getRoleColor } from '../utils/rbac'
 
 export const RoleBasedNavigation = () => {
-  const { user } = useAuthStore()
+  const { user, loading, initialized } = useAuthStore()
   
-  if (!user) return null
+  // Don't render anything while loading or if user is not available
+  if (!initialized || loading || !user) {
+    return null
+  }
   
-  const permissions = getUserPermissions(user)
+  let permissions = []
+  try {
+    permissions = getUserPermissions(user)
+  } catch (error) {
+    console.error('Error getting user permissions:', error)
+    return null
+  }
   
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mb-6">
