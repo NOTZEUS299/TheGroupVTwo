@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAuthStore } from '../stores/authStore'
-import { supabase } from '../lib/supabase'
+import { getSupabase } from '../lib/supabase'
 import type { Notice } from '../lib/supabase'
 import { PencilIcon, TrashIcon, BellIcon } from '@heroicons/react/24/outline'
 import { format } from 'date-fns'
@@ -39,7 +39,7 @@ const Notices = () => {
   const fetchNotices = async () => {
     try {
       setLoading(true)
-      const { data, error } = await supabase
+      const { data, error } = await getSupabase()
         .from('notices')
         .select(`
           *,
@@ -60,7 +60,7 @@ const Notices = () => {
     try {
       if (editingNotice) {
         // Update existing notice
-        const { error } = await supabase
+        const { error } = await getSupabase()
           .from('notices')
           .update({
             title: data.title,
@@ -71,7 +71,7 @@ const Notices = () => {
         if (error) throw error
       } else {
         // Create new notice
-        const { error } = await supabase
+        const { error } = await getSupabase()
           .from('notices')
           .insert([
             {
@@ -107,7 +107,7 @@ const Notices = () => {
     if (!confirm('Are you sure you want to delete this notice?')) return
 
     try {
-      const { error } = await supabase
+      const { error } = await getSupabase()
         .from('notices')
         .delete()
         .eq('id', noticeId)
