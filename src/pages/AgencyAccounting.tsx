@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useAuthStore } from '../stores/authStore'
-import { supabase } from '../lib/supabase'
+import { getSupabase } from '../lib/supabase'
 import type { AgencyAccountingEntry } from '../lib/supabase'
 import { PlusIcon, PencilIcon, TrashIcon, ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline'
 import { format } from 'date-fns'
-import { useForm } from 'react-hook-form'
+import { get, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 
@@ -46,7 +46,7 @@ const AgencyAccounting = () => {
     
     try {
       setLoading(true)
-      const { data, error } = await supabase
+      const { data, error } = await getSupabase()
         .from('agency_accounting')
         .select(`
           *,
@@ -70,7 +70,7 @@ const AgencyAccounting = () => {
     try {
       if (editingTransaction) {
         // Update existing transaction
-        const { error } = await supabase
+        const { error } = await getSupabase()
           .from('agency_accounting')
           .update({
             description: data.description,
@@ -83,7 +83,7 @@ const AgencyAccounting = () => {
         if (error) throw error
       } else {
         // Create new transaction
-        const { error } = await supabase
+        const { error } = await getSupabase()
           .from('agency_accounting')
           .insert([
             {
@@ -124,7 +124,7 @@ const AgencyAccounting = () => {
     if (!confirm('Are you sure you want to delete this transaction?')) return
 
     try {
-      const { error } = await supabase
+      const { error } = await getSupabase()
         .from('agency_accounting')
         .delete()
         .eq('id', transactionId)
