@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useAuthStore } from '../stores/authStore'
-import { supabase } from '../lib/supabase'
+import { getSupabase } from '../lib/supabase'
 import type { Message, Channel } from '../lib/supabase'
 import { PaperAirplaneIcon, PaperClipIcon } from '@heroicons/react/24/outline'
 import { format } from 'date-fns'
@@ -30,7 +30,7 @@ const AgencyChat = () => {
     if (!user?.agency_id) return
     
     try {
-      const { data, error } = await supabase
+      const { data, error } = await getSupabase()
         .from('channels')
         .select('*')
         .eq('type', 'agency')
@@ -49,7 +49,7 @@ const AgencyChat = () => {
     
     try {
       setLoading(true)
-      const { data, error } = await supabase
+      const { data, error } = await getSupabase()
         .from('messages')
         .select(`
           *,
@@ -70,7 +70,7 @@ const AgencyChat = () => {
   const subscribeToMessages = () => {
     if (!user?.agency_id) return
     
-    const subscription = supabase
+    const subscription = getSupabase()
       .channel('agency-messages')
       .on(
         'postgres_changes',
@@ -94,7 +94,7 @@ const AgencyChat = () => {
 
   const fetchSenderInfo = async (message: Message) => {
     try {
-      const { data: sender } = await supabase
+      const { data: sender } = await getSupabase()
         .from('users')
         .select('id, name, email')
         .eq('id', message.sender_id)
@@ -113,7 +113,7 @@ const AgencyChat = () => {
     if (!newMessage.trim() || !channel) return
 
     try {
-      const { error } = await supabase
+      const { error } = await getSupabase()
         .from('messages')
         .insert([
           {
@@ -135,21 +135,21 @@ const AgencyChat = () => {
     if (!file || !channel) return
 
     try {
-      // Upload file to Supabase Storage
+      // Upload file to getSupabase() Storage
       const fileName = `${Date.now()}-${file.name}`
-      const { error } = await supabase.storage
+      const { error } = await getSupabase().storage
         .from('chat-attachments')
         .upload(fileName, file)
 
       if (error) throw error
 
       // Get public URL
-      const { data: { publicUrl } } = supabase.storage
+      const { data: { publicUrl } } = getSupabase().storage
         .from('chat-attachments')
         .getPublicUrl(fileName)
 
       // Send message with attachment
-      const { error: messageError } = await supabase
+      const { error: messageError } = await getSupabase()
         .from('messages')
         .insert([
           {
