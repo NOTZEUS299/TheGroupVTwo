@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAuthStore } from '../stores/authStore'
-import { supabase } from '../lib/supabase'
+import { getSupabase } from '../lib/supabase'
 import type { JournalEntry } from '../lib/supabase'
 import { PlusIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline'
 import { format } from 'date-fns'
@@ -42,7 +42,7 @@ const Journal = () => {
       setLoading(true)
       setError(null)
       
-      const { data, error } = await supabase
+      const { data, error } = await getSupabase()
         .from('journal_entries')
         .select(`
           *,
@@ -78,7 +78,7 @@ const Journal = () => {
       
       if (editingEntry) {
         // Update existing entry
-        const { error } = await supabase
+        const { error } = await getSupabase()
           .from('journal_entries')
           .update({
             title: data.title,
@@ -93,7 +93,7 @@ const Journal = () => {
         }
       } else {
         // Create new entry
-        const { error } = await supabase
+        const { error } = await getSupabase()
           .from('journal_entries')
           .insert([
             {
@@ -139,7 +139,7 @@ const Journal = () => {
 
     try {
       setError(null)
-      const { error } = await supabase
+      const { error } = await getSupabase()
         .from('journal_entries')
         .delete()
         .eq('id', entryId)
