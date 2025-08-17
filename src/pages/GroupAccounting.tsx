@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAuthStore } from '../stores/authStore'
-import { supabase } from '../lib/supabase'
+import { getSupabase } from '../lib/supabase'
 import type { GroupAccountingEntry } from '../lib/supabase'
 import { PlusIcon, PencilIcon, TrashIcon, ArrowUpIcon, ArrowDownIcon } from '@heroicons/react/24/outline'
 import { format } from 'date-fns'
@@ -42,7 +42,7 @@ const GroupAccounting = () => {
   const fetchTransactions = async () => {
     try {
       setLoading(true)
-      const { data, error } = await supabase
+      const { data, error } = await getSupabase()
         .from('group_accounting')
         .select(`
           *,
@@ -63,7 +63,7 @@ const GroupAccounting = () => {
     try {
       if (editingTransaction) {
         // Update existing transaction
-        const { error } = await supabase
+        const { error } = await getSupabase()
           .from('group_accounting')
           .update({
             description: data.description,
@@ -76,7 +76,7 @@ const GroupAccounting = () => {
         if (error) throw error
       } else {
         // Create new transaction
-        const { error } = await supabase
+        const { error } = await getSupabase()
           .from('group_accounting')
           .insert([
             {
@@ -116,7 +116,7 @@ const GroupAccounting = () => {
     if (!confirm('Are you sure you want to delete this transaction?')) return
 
     try {
-      const { error } = await supabase
+      const { error } = await getSupabase()
         .from('group_accounting')
         .delete()
         .eq('id', transactionId)
