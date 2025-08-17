@@ -130,10 +130,10 @@ const Dashboard = () => {
   return (
     <div className="space-y-6">
       {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg shadow-lg p-6 text-white">
+      <div className="glass-card rounded-lg shadow-lg p-6 text-white" id='glass-card-blue'>
         <div className="flex items-center space-x-4">
           <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-            <UserCircleIcon className="h-8 w-8 text-white" />
+            <img src='https://i.ibb.co/B2h7g9Fb/Chat-GPT-Image-Aug-17-2025-01-06-00-PM.png' className="rounded-full" />
           </div>
           <div>
             <h1 className="text-3xl font-bold mb-2">
@@ -143,7 +143,7 @@ const Dashboard = () => {
               Here's what's happening in your business group today.
             </p>
             <div className="mt-2">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-white bg-opacity-20 text-white">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-white bg-opacity-20 text-blue-800">
                 {user?.role === 'core_member' ? 'Core Member' : 'Agency Member'}
               </span>
             </div>
@@ -156,23 +156,23 @@ const Dashboard = () => {
 
       {/* Quick Actions */}
       <div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
+        <h2 className="text-xl font-semibold text-white/90 mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {filteredQuickActions.map((action) => (
             <Link
               key={action.name}
               to={action.href}
-              className="group block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1"
+              className="group block p-6 glass-card rounded-lg shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1"
             >
               <div className="flex items-center space-x-3">
                 <div className={`p-3 rounded-lg ${action.color} text-white`}>
                   <action.icon className="h-6 w-6" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+                  <h3 className="text-lg font-semibold text-white/90 group-hover:text-blue-600 transition-colors">
                     {action.name}
                   </h3>
-                  <p className="text-sm text-gray-600">{action.description}</p>
+                  <p className="text-sm text-white/60">{action.description}</p>
                 </div>
               </div>
             </Link>
@@ -182,12 +182,12 @@ const Dashboard = () => {
 
       {/* Statistics */}
       <div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Overview</h2>
+        <h2 className="text-xl font-semibold text-white/90 mb-4">Overview</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat) => (
-            <div key={stat.name} className="bg-white rounded-lg shadow-md p-6 text-center">
+            <div key={stat.name} className="glass-card rounded-lg shadow-md p-6 text-center">
               <div className={`text-2xl font-bold ${stat.color}`}>{stat.value}</div>
-              <div className="text-sm text-gray-600">{stat.name}</div>
+              <div className="text-sm text-white/60">{stat.name}</div>
             </div>
           ))}
         </div>
@@ -195,9 +195,9 @@ const Dashboard = () => {
 
       {/* Role-based Information */}
       <PermissionGate permission="VIEW_JOURNAL">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Recent Journal Entries</h2>
-          <p className="text-gray-600">As a core member, you have access to the journal feature.</p>
+        <div className="glass-card rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-semibold text-white/90 mb-4">Recent Journal Entries</h2>
+          <p className="text-white/60">As a core member, you have access to the journal feature.</p>
           <Link
             to="/journal"
             className="inline-flex items-center mt-3 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
@@ -208,9 +208,9 @@ const Dashboard = () => {
       </PermissionGate>
 
       <PermissionGate permission="VIEW_LOG_BOOK">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">System Activity</h2>
-          <p className="text-gray-600">Monitor system logs and activity as a core member.</p>
+        <div className="glass-card rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-semibold text-white/90 mb-4">System Activity</h2>
+          <p className="text-white/60">Monitor system logs and activity as a core member.</p>
           <Link
             to="/log-book"
             className="inline-flex items-center mt-3 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
@@ -221,9 +221,9 @@ const Dashboard = () => {
       </PermissionGate>
 
       <PermissionGate permission="VIEW_GROUP_ACCOUNTING">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Financial Overview</h2>
-          <p className="text-gray-600">Manage group finances and track expenses.</p>
+        <div className="glass-card rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-semibold text-white/90 mb-4">Financial Overview</h2>
+          <p className="text-white/60">Manage group finances and track expenses.</p>
           <Link
             to="/group-accounting"
             className="inline-flex items-center mt-3 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
