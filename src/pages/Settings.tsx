@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAuthStore } from '../stores/authStore'
-import { supabase } from '../lib/supabase'
+import { getSupabase } from '../lib/supabase'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -58,7 +58,7 @@ const Settings = () => {
 
     try {
       // Update profile in users table
-      const { error: profileError } = await supabase
+      const { error: profileError } = await getSupabase()
         .from('users')
         .update({ name: data.name })
         .eq('id', user.id)
@@ -67,7 +67,7 @@ const Settings = () => {
 
       // Update email in auth if changed
       if (data.email !== user.email) {
-        const { error: emailError } = await supabase.auth.updateUser({
+        const { error: emailError } = await getSupabase().auth.updateUser({
           email: data.email
         })
         if (emailError) throw emailError
@@ -91,7 +91,7 @@ const Settings = () => {
     setMessage(null)
 
     try {
-      const { error } = await supabase.auth.updateUser({
+      const { error } = await getSupabase().auth.updateUser({
         password: data.newPassword
       })
 
@@ -121,7 +121,7 @@ const Settings = () => {
 
     try {
       // Delete user from users table
-      const { error: profileError } = await supabase
+      const { error: profileError } = await getSupabase()
         .from('users')
         .delete()
         .eq('id', user.id)
@@ -129,11 +129,11 @@ const Settings = () => {
       if (profileError) throw profileError
 
       // Delete user from auth
-      const { error: authError } = await supabase.auth.admin.deleteUser(user.id)
+      const { error: authError } = await getSupabase().auth.admin.deleteUser(user.id)
       if (authError) throw authError
 
       // Sign out and redirect
-      await supabase.auth.signOut()
+      await getSupabase().auth.signOut()
       window.location.href = '/login'
     } catch (error) {
       console.error('Error deleting account:', error)
