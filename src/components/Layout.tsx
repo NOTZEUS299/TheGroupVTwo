@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { NavLink, useLocation, Outlet } from 'react-router-dom'
 import { useAuthStore } from '../stores/authStore'
 import { canAccessRoute } from '../utils/rbac'
