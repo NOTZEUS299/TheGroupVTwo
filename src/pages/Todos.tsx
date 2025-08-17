@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAuthStore } from '../stores/authStore'
-import { supabase } from '../lib/supabase'
+import { getSupabase } from '../lib/supabase'
 import type { Todo } from '../lib/supabase'
 import { PlusIcon, PencilIcon, TrashIcon, UserIcon, BuildingOfficeIcon } from '@heroicons/react/24/outline'
 import { format } from 'date-fns'
@@ -178,7 +178,7 @@ const Todos = () => {
   const fetchTodos = async () => {
     try {
       setLoading(true)
-      let query = supabase
+      let query = getSupabase()
         .from('todos')
         .select(`
           *,
@@ -205,7 +205,7 @@ const Todos = () => {
     try {
       if (editingTodo) {
         // Update existing todo
-        const { error } = await supabase
+        const { error } = await getSupabase()
           .from('todos')
           .update({
             title: data.title,
@@ -219,7 +219,7 @@ const Todos = () => {
         if (error) throw error
       } else {
         // Create new todo
-        const { error } = await supabase
+        const { error } = await getSupabase()
           .from('todos')
           .insert([
             {
@@ -261,7 +261,7 @@ const Todos = () => {
     if (!confirm('Are you sure you want to delete this todo?')) return
 
     try {
-      const { error } = await supabase
+      const { error } = await getSupabase()
         .from('todos')
         .delete()
         .eq('id', todoId)
@@ -275,7 +275,7 @@ const Todos = () => {
 
   const handleStatusChange = async (todoId: string, newStatus: 'pending' | 'completed') => {
     try {
-      const { error } = await supabase
+      const { error } = await getSupabase()
         .from('todos')
         .update({ status: newStatus })
         .eq('id', todoId)
