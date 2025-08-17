@@ -292,11 +292,11 @@ const Layout = () => {
         <main
           className={`p-6`}
           style={{
-            backgroundImage: `url(./src/assets/background/bg-blob-dark.gif)`,
-            backgroundSize: "contain",
+            backgroundImage: `url(./src/assets/background/5.gif)`,
+            backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundAttachment: "fixed",
-            // backgroundRepeat: 'no-repeat',
+            backgroundRepeat: 'no-repeat',
           }}
         >
           <Outlet />
