@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAuthStore } from '../stores/authStore'
-import { supabase } from '../lib/supabase'
+import { getSupabase } from '../lib/supabase'
 import type { LogBookEntry } from '../lib/supabase'
 import { ClockIcon, InformationCircleIcon, ExclamationTriangleIcon, CheckCircleIcon } from '@heroicons/react/24/outline'
 import { format } from 'date-fns'
@@ -19,7 +19,7 @@ const LogBook = () => {
   const fetchLogs = async () => {
     try {
       setLoading(true)
-      const { data, error } = await supabase
+      const { data, error } = await getSupabase()
         .from('log_book')
         .select('*')
         .order('created_at', { ascending: false })
