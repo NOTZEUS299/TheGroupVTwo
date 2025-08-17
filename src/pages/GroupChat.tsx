@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useAuthStore } from '../stores/authStore'
-import { supabase } from '../lib/supabase'
+import { getSupabase } from '../lib/supabase'
 import type { Message, Channel } from '../lib/supabase'
 import { PaperAirplaneIcon, PaperClipIcon } from '@heroicons/react/24/outline'
 import { format } from 'date-fns'
@@ -30,7 +30,7 @@ const GroupChat = () => {
       setError(null)
       
       // First, try to fetch existing group channel
-      let { data: existingChannel, error: channelError } = await supabase
+      let { data: existingChannel, error: channelError } = await getSupabase()
         .from('channels')
         .select('*')
         .eq('type', 'group')
@@ -42,7 +42,7 @@ const GroupChat = () => {
 
       if (!existingChannel) {
         // Create group channel if it doesn't exist
-        const { data: newChannel, error: createError } = await supabase
+        const { data: newChannel, error: createError } = await getSupabase()
           .from('channels')
           .insert([
             {
@@ -79,7 +79,7 @@ const GroupChat = () => {
   const fetchMessages = async (channelId: string) => {
     try {
       setLoading(true)
-      const { data, error } = await supabase
+      const { data, error } = await getSupabase()
         .from('messages')
         .select(`
           *,
@@ -104,7 +104,7 @@ const GroupChat = () => {
 
   const subscribeToMessages = (channelId: string) => {
     try {
-      const subscription = supabase
+      const subscription = getSupabase()
         .channel('messages')
         .on(
           'postgres_changes',
@@ -132,7 +132,7 @@ const GroupChat = () => {
 
   const fetchSenderInfo = async (message: Message) => {
     try {
-      const { data: sender } = await supabase
+      const { data: sender } = await getSupabase()
         .from('users')
         .select('id, name, email')
         .eq('id', message.sender_id)
@@ -157,7 +157,7 @@ const GroupChat = () => {
 
     try {
       setError(null)
-      const { error } = await supabase
+      const { error } = await getSupabase()
         .from('messages')
         .insert([
           {
@@ -185,9 +185,9 @@ const GroupChat = () => {
 
     try {
       setError(null)
-      // Upload file to Supabase Storage
+      // Upload file to getSupabase() Storage
       const fileName = `${Date.now()}-${file.name}`
-      const { error } = await supabase.storage
+      const { error } = await getSupabase().storage
         .from('chat-attachments')
         .upload(fileName, file)
 
@@ -198,12 +198,12 @@ const GroupChat = () => {
       }
 
       // Get public URL
-      const { data: { publicUrl } } = supabase.storage
+      const { data: { publicUrl } } = getSupabase().storage
         .from('chat-attachments')
         .getPublicUrl(fileName)
 
       // Send message with attachment
-      const { error: messageError } = await supabase
+      const { error: messageError } = await getSupabase()
         .from('messages')
         .insert([
           {
