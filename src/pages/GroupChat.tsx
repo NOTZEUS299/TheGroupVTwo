@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useAuthStore } from '../stores/authStore'
-import { supabase } from '../lib/supabase'
+import { getSupabase } from '../lib/supabase'
 import { Send, Paperclip, Smile } from 'lucide-react'
 import Layout from '../components/Layout'
 
@@ -36,7 +36,7 @@ export default function GroupChat() {
     const fetchGroupChannel = async () => {
       try {
         // Get the group channel
-        const { data: channel, error: channelError } = await supabase
+        const { data: channel, error: channelError } = await getSupabase()
           .from('channels')
           .select('id')
           .eq('type', 'group')
@@ -50,7 +50,7 @@ export default function GroupChat() {
         setGroupChannelId(channel.id);
 
         // Fetch existing messages
-        const { data: messagesData, error: messagesError } = await supabase
+        const { data: messagesData, error: messagesError } = await getSupabase()
           .from('messages')
           .select(`
             id,
@@ -82,7 +82,7 @@ export default function GroupChat() {
   useEffect(() => {
     if (!groupChannelId) return;
 
-    const channel = supabase
+    const channel = getSupabase()
       .channel('group-chat-messages')
       .on(
         'postgres_changes',
@@ -94,7 +94,7 @@ export default function GroupChat() {
         },
         async (payload) => {
           // Fetch the complete message with sender info
-          const { data: newMessage, error } = await supabase
+          const { data: newMessage, error } = await getSupabase()
             .from('messages')
             .select(`
               id,
@@ -114,7 +114,7 @@ export default function GroupChat() {
       .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      getSupabase().removeChannel(channel);
     };
   }, [groupChannelId]);
 
@@ -123,7 +123,7 @@ export default function GroupChat() {
 
     setSending(true);
     try {
-      const { error } = await supabase
+      const { error } = await getSupabase()
         .from('messages')
         .insert({
           channel_id: groupChannelId,
